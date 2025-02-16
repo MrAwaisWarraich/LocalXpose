@@ -1,3 +1,4 @@
+
 name: Free VPS with SSH
 on: workflow_dispatch
 
@@ -5,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Install & Start SSH Server
+    - name: Install SSH Server
       run: |
         sudo apt update
         sudo apt install -y openssh-server
@@ -15,14 +16,10 @@ jobs:
         sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
         sudo systemctl restart ssh
 
-    - name: Download LocalXpose
+    - name: Install Tunnelmole
       run: |
-        wget https://api.localxpose.io/downloads/localxpose-linux-amd64 -O localxpose
-        chmod +x localxpose
-
-    - name: Expose SSH with LocalXpose
-      run: |
-        ./localxpose tunnel ssh --to 22 > tunnel.log 2>&1 &
+        curl -fsSL https://get.tunnelmole.com | bash
+        tunnelmole ssh 22 > tunnel.log 2>&1 &
         sleep 10
         cat tunnel.log
 
